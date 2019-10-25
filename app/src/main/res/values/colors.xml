@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#ff9e80</color>
+    <color name="colorPrimaryDark">#c96f53</color>
+    <color name="colorAccent">#ffd0b0</color>
+    <color name="green_dark">#387002</color>
+    <color name="green_light">#99d066</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="black_soft">#6F000000</color>
+    <color name="grey_900">#212121</color>
+    <color name="grey_300">#e0e0e0</color>
+    <color name="gray_light">#6A6A6A</color>
+    <color name="grey_round">#999999</color>
+    <color name="grey_round_opacity">#80999999</color>
+    <color name="link_color">#2196F3</color>
+    <!-- <color name="grey_10">#F5F5F5</color>-->
+    <color name="grey_10">#eeeeee</color>
+    <color name="colorFAB">#2196F3</color>
+    <color name="red">#d50000</color>
+    <color name="white_transparent">#00FFFFFF</color>
+
+    <color name="colorSemitransparentWhite">#82ffffff</color>
+
+    <color name="color_btn_galery">#689f38</color>
+    <color name="color_btn_shot">#4766c2</color>
+    <color name="color_btn_cancel">#7d7d7d</color>
+    <color name="background_shimmer">#dddddd</color>
+    <color name="grey_700_dark">#616161</color>
+    <color name="backround_tap_targetview">#F286BB41</color>
+    <color name="end_of_file">#939598</color>
+</resources>
