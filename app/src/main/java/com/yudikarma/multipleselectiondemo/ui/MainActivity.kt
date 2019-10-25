@@ -1,5 +1,6 @@
 package com.yudikarma.multipleselectiondemo.ui
 
+import android.Manifest
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -30,9 +31,11 @@ import com.yudikarma.multipleselectiondemo.model.GaleryFragmentModel
 import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
-import timber.log.Timber
+import org.jetbrains.anko.toast
+import permissions.dispatcher.*
 import java.util.*
 
+@RuntimePermissions
 class MainActivity : AppCompatActivity(),Player.EventListener, MainRvAdapter.Interaction {
 
     companion object{
@@ -78,10 +81,9 @@ class MainActivity : AppCompatActivity(),Player.EventListener, MainRvAdapter.Int
         setupViewModel()
 
         //setup adapter
-        setupAdapter()
+        setupAdapterWithPermissionCheck()
 
-        //for getracker selected item
-        getTrackerItemSelect()
+
 
         icon_multiple_select.setImageResource(R.drawable.ic_multipleselection_notselect)
         container_icon_multiple_select.background = resources.getDrawable(R.drawable.circle_shape_grey)
@@ -107,7 +109,6 @@ class MainActivity : AppCompatActivity(),Player.EventListener, MainRvAdapter.Int
     }
 
     private fun actionIsNotSupportMultiple() {
-        Timber.d("stop multiple select")
 
         setupAdapterImagesVideo()
 
@@ -138,7 +139,6 @@ class MainActivity : AppCompatActivity(),Player.EventListener, MainRvAdapter.Int
     }
 
     private fun actionIsSupportMultiple() {
-        Timber.d("begin multiple select")
 
         setupAdapterOnlyImages()
 
@@ -209,6 +209,7 @@ class MainActivity : AppCompatActivity(),Player.EventListener, MainRvAdapter.Int
         icon_multiple_select?.visibility = View.GONE
         container_icon_multiple_select?.visibility = View.GONE
     }
+
     fun isHowImage(){
         videoFullScreenPlayer?.visibility = View.GONE
         spinnerVideoDetails.visibility = View.GONE
@@ -227,14 +228,50 @@ class MainActivity : AppCompatActivity(),Player.EventListener, MainRvAdapter.Int
         }
     }
 
-    private fun setupAdapter(){
+    @NeedsPermission(
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE
+    )
+
+    fun setupAdapter(){
         adapter = MainRvAdapter(this,this,viewModel,tracker)
         adapter.submitList(getImageListWithVideo())
         recycleview_galery_fragment.layoutManager = NpaGridLayoutManager(this,4)
         recycleview_galery_fragment.setHasFixedSize(false)
         recycleview_galery_fragment.adapter = adapter
 
+
+        //for getracker selected item
+        getTrackerItemSelect()
+
     }
+
+    @OnShowRationale(
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE
+    )
+    fun onShowRationaleDialog(request: PermissionRequest) {
+        toast("acces storage needed for show image gallery")
+    }
+
+    @OnPermissionDenied(
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE
+    )
+    fun onPermissionCameraDenied() {
+        toast("Permission Denied, App failed to launch")
+        finish()
+    }
+
+    @OnNeverAskAgain(
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE
+    )
+    fun onPermissionCameraNeverAskAgain() {
+        toast("Permission Denied never Ask Again, App failed to launch")
+        finish()
+    }
+
     private fun setupAdapterOnlyImages() {
         images.clear()
         callSettImageList()
@@ -252,7 +289,18 @@ class MainActivity : AppCompatActivity(),Player.EventListener, MainRvAdapter.Int
         adapter.submitList(images)
 
     }
-    private fun getTrackerItemSelect(){
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        onRequestPermissionsResult(requestCode,grantResults)
+    }
+
+
+    fun getTrackerItemSelect(){
         tracker = SelectionTracker.Builder<Long>(
             "mySelection",
             recycleview_galery_fragment,
@@ -291,7 +339,6 @@ class MainActivity : AppCompatActivity(),Player.EventListener, MainRvAdapter.Int
 
                     if (list.size != 0) {
                         listFileSelect = ArrayList(list)
-                        Timber.d("add to list")
 
                     }
                 }
@@ -346,6 +393,7 @@ class MainActivity : AppCompatActivity(),Player.EventListener, MainRvAdapter.Int
     fun callSettImageListwithVideo() {
         images =  getImageListWithVideo()
     }
+
     fun callSettImageList() {
         images = getImagelist()
     }
