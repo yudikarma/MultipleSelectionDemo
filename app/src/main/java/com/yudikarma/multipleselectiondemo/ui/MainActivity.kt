@@ -25,9 +25,9 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import com.yudikarma.multipleselectiondemo.R
-import com.yudikarma.multipleselectiondemo.utils.NpaGridLayoutManager
 import com.yudikarma.multipleselectiondemo.model.EventBusModel
 import com.yudikarma.multipleselectiondemo.model.GaleryFragmentModel
+import com.yudikarma.multipleselectiondemo.utils.NpaGridLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -36,9 +36,9 @@ import permissions.dispatcher.*
 import java.util.*
 
 @RuntimePermissions
-class MainActivity : AppCompatActivity(),Player.EventListener, MainRvAdapter.Interaction {
+class MainActivity : AppCompatActivity(), Player.EventListener, MainRvAdapter.Interaction {
 
-    companion object{
+    companion object {
         /**
          * DEFAULT Value from system Media Store for type image is 1
         ! please dont change this value
@@ -58,20 +58,18 @@ class MainActivity : AppCompatActivity(),Player.EventListener, MainRvAdapter.Int
     private var images: ArrayList<GaleryFragmentModel> = arrayListOf()
     lateinit var adapter: MainRvAdapter
     private lateinit var selected_file: GaleryFragmentModel
-    private  var selected_filePosition: Int? = null
-    private var old_selected_filePosition:Int?= null
+    private var selected_filePosition: Int? = null
+    private var old_selected_filePosition: Int? = null
     private var bus: EventBus = EventBus.getDefault()
     private var MultipleSupportState = true //for multiple select photos
-    private var listFileSelect :ArrayList<GaleryFragmentModel> = arrayListOf()
+    private var listFileSelect: ArrayList<GaleryFragmentModel> = arrayListOf()
     private var listSizeNow = 0
     private var tracker: SelectionTracker<Long>? = null
-    var galeryFragmentModel :GaleryFragmentModel? = null
+    var galeryFragmentModel: GaleryFragmentModel? = null
 
-    private  var player : SimpleExoPlayer? = null
+    private var player: SimpleExoPlayer? = null
     internal var mHandler: Handler? = null
     internal var mRunnable: Runnable? = null
-
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,15 +84,14 @@ class MainActivity : AppCompatActivity(),Player.EventListener, MainRvAdapter.Int
 
 
         icon_multiple_select.setImageResource(R.drawable.ic_multipleselection_notselect)
-        container_icon_multiple_select.background = resources.getDrawable(R.drawable.circle_shape_grey)
+        container_icon_multiple_select.background =
+            resources.getDrawable(R.drawable.circle_shape_grey)
         icon_multiple_select.setOnClickListener {
             actionOnSupportMultipleClick()
         }
 
 
-
     }
-
 
 
     fun actionOnSupportMultipleClick() {
@@ -117,13 +114,15 @@ class MainActivity : AppCompatActivity(),Player.EventListener, MainRvAdapter.Int
         viewModel.isSupportMultipleSelect.value = MultipleSupportState
         badge_selected.visibility = View.GONE
 
-        val holder = recycleview_galery_fragment.findViewHolderForAdapterPosition(selected_filePosition?:0)
-        if (holder is MainRvAdapter.GaleryViewHolder){
+        val holder =
+            recycleview_galery_fragment.findViewHolderForAdapterPosition(selected_filePosition ?: 0)
+        if (holder is MainRvAdapter.GaleryViewHolder) {
             adapter.setVisibleSelecttedBadge(MultipleSupportState, holder)
         }
 
         icon_multiple_select.setImageResource(R.drawable.ic_multipleselection_notselect)
-        container_icon_multiple_select.background = resources.getDrawable(R.drawable.circle_shape_grey)
+        container_icon_multiple_select.background =
+            resources.getDrawable(R.drawable.circle_shape_grey)
 
 
         tracker?.let {
@@ -148,8 +147,9 @@ class MainActivity : AppCompatActivity(),Player.EventListener, MainRvAdapter.Int
         viewModel.isSupportMultipleSelect.value = MultipleSupportState
         badge_selected.visibility = View.VISIBLE
         badge_selected.setText("1")
-        val holder = recycleview_galery_fragment.findViewHolderForAdapterPosition(selected_filePosition?:0)
-        if (holder is MainRvAdapter.GaleryViewHolder){
+        val holder =
+            recycleview_galery_fragment.findViewHolderForAdapterPosition(selected_filePosition ?: 0)
+        if (holder is MainRvAdapter.GaleryViewHolder) {
             adapter.setVisibleSelecttedBadge(MultipleSupportState, holder)
         }
         imageview_insert_post.isEnabled = false
@@ -174,8 +174,6 @@ class MainActivity : AppCompatActivity(),Player.EventListener, MainRvAdapter.Int
 
         MultipleSupportState = false
     }
-
-
 
 
     override fun onStart() {
@@ -203,14 +201,14 @@ class MainActivity : AppCompatActivity(),Player.EventListener, MainRvAdapter.Int
         releasePlayer()
     }
 
-    fun isShowVideo(){
+    fun isShowVideo() {
         videoFullScreenPlayer?.visibility = View.VISIBLE
         imageview_insert_post?.visibility = View.GONE
         icon_multiple_select?.visibility = View.GONE
         container_icon_multiple_select?.visibility = View.GONE
     }
 
-    fun isHowImage(){
+    fun isHowImage() {
         videoFullScreenPlayer?.visibility = View.GONE
         spinnerVideoDetails.visibility = View.GONE
         imageview_insert_post?.visibility = View.VISIBLE
@@ -223,7 +221,7 @@ class MainActivity : AppCompatActivity(),Player.EventListener, MainRvAdapter.Int
     @Subscribe
     fun onMessageEvent(eventBusModel: EventBusModel) {
 
-        if (eventBusModel.response.equals("disableMultiplePhotos")){
+        if (eventBusModel.response.equals("disableMultiplePhotos")) {
             actionOnSupportMultipleClick()
         }
     }
@@ -233,10 +231,10 @@ class MainActivity : AppCompatActivity(),Player.EventListener, MainRvAdapter.Int
         Manifest.permission.WRITE_EXTERNAL_STORAGE
     )
 
-    fun setupAdapter(){
-        adapter = MainRvAdapter(this,this,viewModel,tracker)
+    fun setupAdapter() {
+        adapter = MainRvAdapter(this, this, viewModel, tracker)
         adapter.submitList(getImageListWithVideo())
-        recycleview_galery_fragment.layoutManager = NpaGridLayoutManager(this,4)
+        recycleview_galery_fragment.layoutManager = NpaGridLayoutManager(this, 4)
         recycleview_galery_fragment.setHasFixedSize(false)
         recycleview_galery_fragment.adapter = adapter
 
@@ -296,16 +294,16 @@ class MainActivity : AppCompatActivity(),Player.EventListener, MainRvAdapter.Int
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        onRequestPermissionsResult(requestCode,grantResults)
+        onRequestPermissionsResult(requestCode, grantResults)
     }
 
 
-    fun getTrackerItemSelect(){
+    fun getTrackerItemSelect() {
         tracker = SelectionTracker.Builder<Long>(
             "mySelection",
             recycleview_galery_fragment,
             KeyProviders(recycleview_galery_fragment),
-            MainRvAdapter.DetailsLookUp(recycleview_galery_fragment,tracker),
+            MainRvAdapter.DetailsLookUp(recycleview_galery_fragment, tracker),
             StorageStrategy.createLongStorage()
         ).withSelectionPredicate(
             Predicates()
@@ -319,21 +317,22 @@ class MainActivity : AppCompatActivity(),Player.EventListener, MainRvAdapter.Int
         tracker?.addObserver(object : SelectionTracker.SelectionObserver<Long>() {
             override fun onSelectionChanged() {
                 super.onSelectionChanged()
-                if (!MultipleSupportState && tracker?.selection?.size() ?: 0 <= 8 ){
+                if (!MultipleSupportState && tracker?.selection?.size() ?: 0 <= 8) {
                     val itemposition: Selection<Long>? = tracker?.selection
 
-                    if (!(itemposition?.size() != 0 && itemposition!!.size() <= (8 -listSizeNow))) {
+                    if (!(itemposition?.size() != 0 && itemposition!!.size() <= (8 - listSizeNow))) {
                         //context.toast("max Upload is ${AppConstants.MAXPhoto.toString()}")
                     }
-                    if (listFileSelect.size >= 0){
+                    if (listFileSelect.size >= 0) {
                         listFileSelect.clear()
                     }
-                    val list = itemposition?.map { adapter.differ.currentList[it.toInt()] }?.toList()
+                    val list =
+                        itemposition?.map { adapter.differ.currentList[it.toInt()] }?.toList()
 
-                    if (list.size == 0 && firstObserver){
+                    if (list.size == 0 && firstObserver) {
                         badge_selected.setText("1")
                         firstObserver = false
-                    }else{
+                    } else {
                         badge_selected.setText("${list.size}")
                     }
 
@@ -351,7 +350,7 @@ class MainActivity : AppCompatActivity(),Player.EventListener, MainRvAdapter.Int
     private fun setupViewModel() {
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
 
-        viewModel.selectedFile.observe(this,androidx.lifecycle.Observer {
+        viewModel.selectedFile.observe(this, androidx.lifecycle.Observer {
             selected_file = it
 
             //for image selected
@@ -365,7 +364,7 @@ class MainActivity : AppCompatActivity(),Player.EventListener, MainRvAdapter.Int
                 imageview_insert_post.setAspectRatio(1, 1)
 
 
-            }else{ //for video selected
+            } else { //for video selected
 
                 isShowVideo()
 
@@ -375,30 +374,28 @@ class MainActivity : AppCompatActivity(),Player.EventListener, MainRvAdapter.Int
 
         })
 
-        viewModel.selectedPosition.observe(this,androidx.lifecycle.Observer {
-            if (selected_filePosition==null){
+        viewModel.selectedPosition.observe(this, androidx.lifecycle.Observer {
+            if (selected_filePosition == null) {
                 old_selected_filePosition = 0
-            }else{
+            } else {
                 old_selected_filePosition = selected_filePosition
             }
             selected_filePosition = it
         })
 
-        viewModel.isSupportMultipleSelect.observe(this,androidx.lifecycle.Observer {
+        viewModel.isSupportMultipleSelect.observe(this, androidx.lifecycle.Observer {
 
         })
 
     }
 
     fun callSettImageListwithVideo() {
-        images =  getImageListWithVideo()
+        images = getImageListWithVideo()
     }
 
     fun callSettImageList() {
         images = getImagelist()
     }
-
-
 
 
     /**
@@ -410,9 +407,10 @@ class MainActivity : AppCompatActivity(),Player.EventListener, MainRvAdapter.Int
         val projection = arrayOf(
             MediaStore.Files.FileColumns.DATA,
             MediaStore.Files.FileColumns.DATE_ADDED,
-            MediaStore.Files.FileColumns.MEDIA_TYPE)
+            MediaStore.Files.FileColumns.MEDIA_TYPE
+        )
 
-        val selection:String = (MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+        val selection: String = (MediaStore.Files.FileColumns.MEDIA_TYPE + "="
                 + MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE
                 /*+ " OR "
                 + MediaStore.Files.FileColumns.MEDIA_TYPE + "="
@@ -420,13 +418,20 @@ class MainActivity : AppCompatActivity(),Player.EventListener, MainRvAdapter.Int
 
         val queryUri = MediaStore.Files.getContentUri("external")
 
-        val cursorLoader = CursorLoader(this,queryUri,projection,selection,null, MediaStore.Files.FileColumns.DATE_ADDED + " DESC")
+        val cursorLoader = CursorLoader(
+            this,
+            queryUri,
+            projection,
+            selection,
+            null,
+            MediaStore.Files.FileColumns.DATE_ADDED + " DESC"
+        )
 
         val cursor = cursorLoader.loadInBackground()
 
 
         cursor?.let {
-            while (it.moveToNext()){
+            while (it.moveToNext()) {
                 val dataColumnIndex = it.getColumnIndex(MediaStore.Files.FileColumns.DATA)
                 val typeMedia = it.getColumnIndex(MediaStore.Files.FileColumns.MEDIA_TYPE)
 
@@ -434,7 +439,8 @@ class MainActivity : AppCompatActivity(),Player.EventListener, MainRvAdapter.Int
                 val mediaType = it.getInt(typeMedia)/*1 == image , 3 == video*/
 
                 absolutePathOfFile?.let { pathfile ->
-                    galeryFragmentModel = GaleryFragmentModel(fileName = pathfile,type_file = mediaType)
+                    galeryFragmentModel =
+                        GaleryFragmentModel(fileName = pathfile, type_file = mediaType)
                     galeryFragmentModel?.let {
                         dataLocal.add(it)
                     }
@@ -457,9 +463,10 @@ class MainActivity : AppCompatActivity(),Player.EventListener, MainRvAdapter.Int
         val projection = arrayOf(
             MediaStore.Files.FileColumns.DATA,
             MediaStore.Files.FileColumns.DATE_ADDED,
-            MediaStore.Files.FileColumns.MEDIA_TYPE)
+            MediaStore.Files.FileColumns.MEDIA_TYPE
+        )
 
-        val selection:String = (MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+        val selection: String = (MediaStore.Files.FileColumns.MEDIA_TYPE + "="
                 + MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE
                 + " OR "
                 + MediaStore.Files.FileColumns.MEDIA_TYPE + "="
@@ -467,13 +474,20 @@ class MainActivity : AppCompatActivity(),Player.EventListener, MainRvAdapter.Int
 
         val queryUri = MediaStore.Files.getContentUri("external")
 
-        val cursorLoader = CursorLoader(this,queryUri,projection,selection,null, MediaStore.Files.FileColumns.DATE_ADDED + " DESC")
+        val cursorLoader = CursorLoader(
+            this,
+            queryUri,
+            projection,
+            selection,
+            null,
+            MediaStore.Files.FileColumns.DATE_ADDED + " DESC"
+        )
 
         val cursor = cursorLoader.loadInBackground()
 
 
         cursor?.let {
-            while (it.moveToNext()){
+            while (it.moveToNext()) {
                 val dataColumnIndex = it.getColumnIndex(MediaStore.Files.FileColumns.DATA)
                 val typeMedia = it.getColumnIndex(MediaStore.Files.FileColumns.MEDIA_TYPE)
 
@@ -481,7 +495,8 @@ class MainActivity : AppCompatActivity(),Player.EventListener, MainRvAdapter.Int
                 val mediaType = it.getInt(typeMedia)/*1 == image , 3 == video*/
 
                 absolutePathOfFile?.let { pathfile ->
-                    galeryFragmentModel = GaleryFragmentModel(fileName = pathfile,type_file = mediaType)
+                    galeryFragmentModel =
+                        GaleryFragmentModel(fileName = pathfile, type_file = mediaType)
                     galeryFragmentModel?.let {
                         dataLocal.add(it)
                     }
@@ -510,16 +525,19 @@ class MainActivity : AppCompatActivity(),Player.EventListener, MainRvAdapter.Int
             val trackSelector = DefaultTrackSelector(videoTrackSelectionFactory)
             // 2. Create the player
             // player = ExoPlayerFactory.newSimpleInstance(context,DefaultRenderersFactory(context), trackSelector, loadControl)
-            player = ExoPlayerFactory.newSimpleInstance(this,
-                DefaultRenderersFactory(this), trackSelector)
+            player = ExoPlayerFactory.newSimpleInstance(
+                this,
+                DefaultRenderersFactory(this), trackSelector
+            )
             videoFullScreenPlayer?.setPlayer(player)
         }
 
     }
+
     private fun buildMediaSource(mUri: Uri) {
         initExoPlayer()
 
-        if (mUri == null){
+        if (mUri == null) {
             return
         }
         // Measures bandwidth during playback. Can be null if not required.
@@ -532,7 +550,8 @@ class MainActivity : AppCompatActivity(),Player.EventListener, MainRvAdapter.Int
         // This is the MediaSource representing the media to be played.
         /*val videoSource = ExtractorMediaSource.Factory(dataSourceFactory)
             .createMediaSource(mUri)*/
-        val videoSource = ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(mUri) as MediaSource
+        val videoSource =
+            ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(mUri) as MediaSource
         // Prepare the player with the source.
         player?.prepare(videoSource)
         player?.playWhenReady = true
@@ -564,7 +583,10 @@ class MainActivity : AppCompatActivity(),Player.EventListener, MainRvAdapter.Int
 
     }
 
-    override fun onTracksChanged(trackGroups: TrackGroupArray?, trackSelections: TrackSelectionArray?) {
+    override fun onTracksChanged(
+        trackGroups: TrackGroupArray?,
+        trackSelections: TrackSelectionArray?
+    ) {
 
     }
 
